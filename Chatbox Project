@@ -1,0 +1,45 @@
+!pip install openai
+import openai
+
+# Replace with your OpenAI API key
+api_key = 'your_openai_api_key'
+openai.api_key = api_key
+
+conversation_history = []
+
+def chat_with_bot(user_input):
+    global conversation_history
+    
+    # Append user input to conversation history
+    conversation_history.append(user_input.strip())
+    
+    # Construct the prompt including conversation history
+    prompt = 'Conversation History:\n' + '\n'.join(conversation_history) + '\nUser: ' + user_input.strip() + '\nBot:'
+    
+    # Request for AI completion using GPT-3.5
+    response = openai.Completion.create(
+      engine="text-davinci-003",
+      prompt=prompt,
+      max_tokens=150
+    )
+    
+    # Retrieve bot's response from AI completion
+    bot_response = response['choices'][0]['text'].strip()
+    
+    # Append bot's response to conversation history
+    conversation_history.append(bot_response)
+    
+    return bot_response
+
+if __name__ == "__main__":
+    print("Welcome! Type 'exit' to end the conversation.")
+    
+    while True:
+        user_input = input("You: ")
+        
+        if user_input.lower() == 'exit':
+            print("Exiting...")
+            break
+        
+        bot_response = chat_with_bot(user_input)
+        print("Bot:", bot_response)
